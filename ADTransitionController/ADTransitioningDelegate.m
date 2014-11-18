@@ -38,11 +38,11 @@
 
 #pragma mark - ADTransitionDelegate
 - (void)pushTransitionDidFinish:(ADTransition *)transition {
-    [self _completeTransition];
+//    [self _completeTransition];
 }
 
 - (void)popTransitionDidFinish:(ADTransition *)transition {
-    [self _completeTransition];
+//    [self _completeTransition];
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate
@@ -110,6 +110,8 @@
     viewOut.layer.doubleSided = NO;
 
     [self _setupLayers:@[viewIn.layer, viewOut.layer]];
+    [CATransaction begin];
+    __weak typeof(self) weakSelf = self;
     [CATransaction setCompletionBlock:^{
         [self _teardownLayers:@[viewIn.layer, viewOut.layer]];
         viewIn.layer.transform = CATransform3DIdentity;
@@ -117,11 +119,15 @@
         containerView.layer.transform = CATransform3DIdentity;
 
         UIView * contextView = [_currentTransitioningContext containerView];
+        NSParameterAssert(contextView);
+        
         viewOut.frame = containerView.frame;
         [contextView addSubview:viewOut];
         viewIn.frame = containerView.frame;
         [contextView addSubview:viewIn];
         [containerView removeFromSuperview];
+        
+        [weakSelf _completeTransition];
     }];
 
     if ([transition isKindOfClass:[ADTransformTransition class]]) { // ADTransformTransition
@@ -142,6 +148,7 @@
     } else if (transition != nil) {
         NSAssert(FALSE, @"Unhandled ADTransition subclass!");
     }
+    [CATransaction commit];
 }
 
 - (void)_setupLayers:(NSArray *)layers {
