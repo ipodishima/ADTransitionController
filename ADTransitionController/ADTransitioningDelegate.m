@@ -38,11 +38,11 @@
 
 #pragma mark - ADTransitionDelegate
 - (void)pushTransitionDidFinish:(ADTransition *)transition {
-//    [self _completeTransition];
+
 }
 
 - (void)popTransitionDidFinish:(ADTransition *)transition {
-//    [self _completeTransition];
+
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate
